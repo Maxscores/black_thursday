@@ -2,34 +2,41 @@ require 'bigdecimal'
 require_relative './sales_engine'
 
 class SalesAnalyst
-  attr_reader :se, :invoice_count
+  attr_reader :se,
+              :invoice_count,
+              :merchant_count,
+              :item_count
 
   def initialize(sales_engine)
     @se = sales_engine
-    @invoice_count = se.invoices.invoices.count
+    @invoice_count = se.invoices.invoices.length
+    @merchant_count = se.merchants.merchants.length
+    @item_count = se.items.items.length
   end
 
   def average_items_per_merchant
-    (se.items.items.count.to_f / se.merchants.merchants.count).round(2)
+    (item_count.to_f / merchant_count).round(2)
   end
 
   def average_items_per_merchant_standard_deviation
-      Math.sqrt(count_all_items_for_each_merchant.map do |item_count|
-        (average_items_per_merchant - item_count) ** 2
-      end.sum / (se.merchants.merchants.count - 1)).round(2)
+    average_items = average_items_per_merchant
+    Math.sqrt(all_items_for_each_merchant.map do |(key, item_count)|
+      (average_items - item_count) ** 2
+    end.sum / (merchant_count - 1)).round(2)
   end
 
-  def count_all_items_for_each_merchant
-    se.merchants.merchants.map do |merchant|
-      merchant.items.count
+  def all_items_for_each_merchant
+    se.items.items.reduce({}) do |result, item|
+      result[item.merchant_id] = 0 if result[item.merchant_id].nil?
+      result[item.merchant_id] += 1
+      result
     end
   end
 
   def merchants_with_high_item_count
-    se.merchants.merchants.reduce([]) do |result, merchant|
-      if merchant.items.count >= minimum_for_high_items
-        result << merchant
-      end
+    minimum = minimum_for_high_items
+    all_items_for_each_merchant.reduce([]) do |result, (merchant_id, items)|
+      result << se.merchants.find_by_id(merchant_id) if items >= minimum
       result
     end
   end
@@ -49,24 +56,26 @@ class SalesAnalyst
   def average_average_price_per_merchant
     BigDecimal((se.merchants.merchants.inject(0) do |sum, merchant|
       sum += average_item_price_for_merchant(merchant.id)
-    end/se.merchants.merchants.count)).round(2)
+    end/merchant_count)).round(2)
   end
 
   def standard_deviation_of_item_price
+    average_price = average_item_price
     Math.sqrt(se.items.items.map do |item|
-      (average_item_price - item.unit_price) ** 2
-    end.sum / (se.items.items.count - 1)).round(2)
+      (average_price - item.unit_price) ** 2
+    end.sum / (item_count - 1)).round(2)
   end
 
   def average_item_price
     BigDecimal((se.items.items.inject(0) do |sum, item|
       sum += item.unit_price
-    end/se.items.items.count).round)
+    end/item_count).round)
   end
 
   def golden_items
+    minimum = minimum_for_golden_item
     se.items.items.reduce([]) do |result, item|
-      if item.unit_price >= minimum_for_golden_item
+      if item.unit_price >= minimum
         result << item
       end
       result
@@ -78,13 +87,13 @@ class SalesAnalyst
   end
 
   def average_invoices_per_merchant
-    (se.invoices.invoices.count.to_f / se.merchants.merchants.count).round(2)
+    (invoice_count.to_f / merchant_count).round(2)
   end
 
   def average_invoices_per_merchant_standard_deviation
     Math.sqrt(count_all_invoices_for_each_merchant.map do |invoice_count|
       (average_invoices_per_merchant - invoice_count) ** 2
-    end.sum / (se.merchants.merchants.count - 1 )).round(2)
+    end.sum / (merchant_count - 1 )).round(2)
   end
 
   def count_all_invoices_for_each_merchant
@@ -93,32 +102,39 @@ class SalesAnalyst
     end
   end
 
+  def accumulate_merchant_invoices
+    se.invoices.invoices.reduce({}) do |result, invoice|
+      result[invoice.merchant_id] = 0 if result[invoice.merchant_id].nil?
+      result[invoice.merchant_id] += 1
+      result
+    end
+  end
+
   def top_merchants_by_invoice_count
-    se.merchants.merchants.reduce([]) do |result, merchant|
-      if merchant.invoices.count >= top_merchants_by_invoice_threshold
-        result << merchant
-      end
+    minimum = top_merchants_by_invoice_threshold
+    accumulate_merchant_invoices.reduce([]) do |result, (merchant, invoices)|
+      result << se.merchants.find_by_id(merchant) if invoices >= minimum
+
       result
     end
   end
 
   def top_merchants_by_invoice_threshold
-    twice_stdev = (2 * average_items_per_merchant_standard_deviation)
+    twice_stdev = (2 * average_invoices_per_merchant_standard_deviation)
     average_invoices_per_merchant + twice_stdev
   end
 
   def bottom_merchants_by_invoice_count
-    se.merchants.merchants.reduce([]) do |result, merchant|
-      if merchant.invoices.count <= bottom_merchants_by_invoice_threshold
-        result << merchant
-      end
+    minimum = bottom_merchants_by_invoice_threshold
+    accumulate_merchant_invoices.reduce([]) do |result, (merchant, invoices)|
+      result << se.merchants.find_by_id(merchant) if invoices <= minimum
       result
     end
   end
 
   def bottom_merchants_by_invoice_threshold
-    twice_stdev = (2 * average_items_per_merchant_standard_deviation)
-    return 0 if (average_invoices_per_merchant - twice_stdev) < 0
+    twice_stdev = (2 * average_invoices_per_merchant_standard_deviation)
+    # return 0 if (average_invoices_per_merchant - twice_stdev) < 0
     average_invoices_per_merchant - twice_stdev
   end
 
@@ -151,7 +167,7 @@ class SalesAnalyst
   end
 
   def average_invoices_per_day
-    (se.invoices.invoices.count) / 7
+    (invoice_count) / 7
   end
 
   def invoice_status(status)
@@ -166,5 +182,4 @@ class SalesAnalyst
       result
     end
   end
-
 end
