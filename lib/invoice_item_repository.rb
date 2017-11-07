@@ -19,10 +19,10 @@ class InvoiceItemRepository
   end
 
   def find_by_id(invoice_item_id)
-    invoice = invoice_items.select do |id, invoice|
+    invoices = invoice_items.select do |id, invoice|
       invoice.any? {|invoice_item| invoice_item.id == invoice_item_id.to_i}
     end.values.flatten
-    invoice.find {|invoice_item| invoice_item.id == invoice_item_id.to_i}
+    invoices.find {|invoice_item| invoice_item.id == invoice_item_id.to_i}
   end
 
   def find_all_by_item_id(item_id)
