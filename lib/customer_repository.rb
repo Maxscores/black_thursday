@@ -6,7 +6,10 @@ class CustomerRepository
 
   def initialize(customers, parent)
     @parent = parent
-    @customers = customers.map {|customer| Customer.new(customer, self)}
+    @customers = customers.reduce({}) do |result, customer|
+      result[customer[:id].to_i] = Customer.new(customer, self)
+      result
+    end
   end
 
   def all
@@ -14,21 +17,19 @@ class CustomerRepository
   end
 
   def find_by_id(id)
-    all.find do |customer|
-      customer.id == id.to_i
-    end
+    all[id]
   end
 
   def find_all_by_first_name(name)
-    all.find_all do |customer|
+    all.select do |customer_id, customer|
       customer.first_name.downcase.include?(name.downcase)
-    end
+    end.values
   end
 
   def find_all_by_last_name(name)
-    all.find_all do |customer|
+    all.select do |customer_id, customer|
       customer.last_name.downcase.include?(name.downcase)
-    end
+    end.values
   end
 
   def find_merchant_by_customer_id(customer_id)
