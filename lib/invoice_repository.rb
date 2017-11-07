@@ -4,8 +4,11 @@ class InvoiceRepository
   attr_reader :invoices, :parent
 
   def initialize(invoices, parent)
-    @invoices = invoices.map {|invoice| Invoice.new(invoice, self)}
     @parent = parent
+    @invoices = invoices.reduce({}) do |result, invoice|
+      result[invoice[:id].to_i] = Invoice.new(invoice, self)
+      result
+    end
   end
 
   def all
@@ -13,27 +16,25 @@ class InvoiceRepository
   end
 
   def find_by_id(id)
-    invoices.find do |invoice|
-      invoice.id == id.to_i
-    end
+    all[id]
   end
 
   def find_all_by_customer_id(customer_id)
-    invoices.find_all do |invoice|
-      invoice.customer_id == customer_id.to_i
-    end
+    all.select do |id, invoice|
+      invoice.customer_id == customer_id
+    end.values
   end
 
   def find_all_by_merchant_id(merchant_id)
-    invoices.find_all do |invoice|
-      invoice.merchant_id == merchant_id.to_i
-    end
+    all.select do |id, invoice|
+      invoice.merchant_id == merchant_id
+    end.values
   end
 
   def find_all_by_status(status)
-    invoices.find_all do |invoice|
+    all.select do |id, invoice|
       invoice.status == status.downcase.to_sym
-    end
+    end.values
   end
 
   def find_merchant_by_id(merchant_id)

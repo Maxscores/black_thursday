@@ -5,9 +5,11 @@ class TransactionRepository
               :parent
 
   def initialize(transactions, parent)
-    @transactions = transactions.map {|transaction|
-      Transaction.new(transaction, self)}
     @parent = parent
+    @transactions = transactions.reduce({}) do |result, transaction|
+      result[transaction[:id].to_i] = Transaction.new(transaction, self)
+      result
+    end
   end
 
   def all
@@ -15,27 +17,25 @@ class TransactionRepository
   end
 
   def find_by_id(id)
-    transactions.find do |transaction|
-      transaction.id == id
-    end
+    all[id]
   end
 
-  def find_all_by_invoice_id(id)
-    transactions.find_all do |transaction|
-      transaction.invoice_id == id
-    end
+  def find_all_by_invoice_id(invoice_id)
+    transactions.select do |id, transaction|
+      transaction.invoice_id == invoice_id
+    end.values
   end
 
   def find_all_by_credit_card_number(number)
-    transactions.find_all do |transaction|
+    transactions.select do |id, transaction|
       transaction.credit_card_number == number
-    end
+    end.values
   end
 
   def find_all_by_result(result)
-    transactions.find_all do |transaction|
+    transactions.select do |id, transaction|
       transaction.result.downcase == result.downcase
-    end
+    end.values
   end
 
   def find_invoice_by_invoice_id(invoice_id)
