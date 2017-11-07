@@ -7,7 +7,8 @@ class InvoiceItemRepository
   def initialize(invoice_items, parent)
     @parent = parent
     @invoice_items = invoice_items.reduce({}) do |result, invoice_item|
-      result[invoice_item[:id].to_i] = InvoiceItem.new(invoice_item, self)
+      result[invoice_item[:invoice_id].to_i] = [] if !result[invoice_item[:invoice_id].to_i]
+      result[invoice_item[:invoice_id].to_i] << InvoiceItem.new(invoice_item, self)
       result
     end
   end
@@ -16,20 +17,22 @@ class InvoiceItemRepository
     invoice_items.values
   end
 
-  def find_by_id(id)
-    invoice_items[id]
+  def find_by_id(invoice_item_id)
+    invoice = invoice_items.select do |id, invoice|
+      invoice.any? {|invoice_item| invoice_item.id == invoice_item_id.to_i}
+    end.values.flatten
+    invoice.find {|invoice_item| invoice_item.id == invoice_item_id.to_i}
   end
 
   def find_all_by_item_id(item_id)
-    invoice_items.select do |id, invoice_item|
-      invoice_item.item_id.to_i == item_id.to_i
-    end.values
+    invoices = invoice_items.select do |id, invoice|
+      invoice.any? {|invoice_item| invoice_item.item_id == item_id.to_i}
+    end.values.flatten
+    invoices.find_all {|invoice_item| invoice_item.item_id == item_id.to_i}
   end
 
   def find_all_by_invoice_id(invoice_id)
-    invoice_items.select do |id, invoice_item|
-      invoice_item.invoice_id.to_i == invoice_id.to_i
-    end.values
+    invoice_items[invoice_id.to_i]
   end
 
   def inspect

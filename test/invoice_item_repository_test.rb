@@ -70,6 +70,7 @@ class InvoiceItemsRepositoryTest < Minitest::Test
       :updated_at => '2007-06-04 21:35:10 UTC'
     }]
     ir = InvoiceItemRepository.new(invoice_items, parent)
+    # require "pry"; binding.pry
     assert_equal 3, ir.find_by_id("3").id
     assert_equal 4, ir.find_by_id("4").id
   end

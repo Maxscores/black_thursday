@@ -28,7 +28,7 @@ class TransactionRepositoryTest < Minitest::Test
 
   def test_transaction_repository_initalizes_with_attributes
     assert_instance_of TransactionRepository, transactions
-    assert_equal 2, transactions.transactions.count
+    assert_equal 2, transactions.all.count
     assert_instance_of Transaction, transactions.all.first[1]
     assert_instance_of TransactionRepository, transactions.transactions.first[1].parent
   end
