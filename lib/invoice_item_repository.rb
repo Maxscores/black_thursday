@@ -7,8 +7,9 @@ class InvoiceItemRepository
   def initialize(invoice_items, parent)
     @parent = parent
     @invoice_items = invoice_items.reduce({}) do |result, invoice_item|
-      result[invoice_item[:invoice_id].to_i] = [] if !result[invoice_item[:invoice_id].to_i]
-      result[invoice_item[:invoice_id].to_i] << InvoiceItem.new(invoice_item, self)
+      key = invoice_item[:invoice_id].to_i
+      result[key] = [] if !result[key]
+      result[key] << InvoiceItem.new(invoice_item, self)
       result
     end
   end
