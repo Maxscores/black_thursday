@@ -31,9 +31,9 @@ class CustomerRepositoryTest < Minitest::Test
   def test_it_initializes_with_attributes
     assert_instance_of CustomerRepository, customers
     assert_equal 3, customers.all.count
-    assert_instance_of Customer, customers.all.values.first
-    assert_instance_of Customer, customers.all.values.last
-    assert_instance_of CustomerRepository, customers.all.values.first.parent
+    assert_instance_of Customer, customers.all.first
+    assert_instance_of Customer, customers.all.last
+    assert_instance_of CustomerRepository, customers.all.first.parent
   end
 
   def test_find_by_id

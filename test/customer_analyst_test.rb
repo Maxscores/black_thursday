@@ -45,7 +45,6 @@ class CustomerAnalystTest < Minitest::Test
   end
 
   def test_one_time_buyers_top_items
-    skip
     top_item = sa.one_time_buyers_top_items
 
     assert_equal 1, top_item.length
@@ -54,7 +53,6 @@ class CustomerAnalystTest < Minitest::Test
   end
 
   def test_items_bought_in_year
-    skip
     items = sa.items_bought_in_year(1, 2009)
 
     assert_equal 16, items.count
@@ -64,15 +62,13 @@ class CustomerAnalystTest < Minitest::Test
   end
 
   def test_highest_volume_items
-    skip
     items = sa.highest_volume_items(1)
 
     assert_equal 1, items.count
-    assert_equal 263519264, items.first.id
+    assert_equal 263529264, items.first.id
   end
 
   def test_customers_with_unpaid_invoices
-    skip
     customers = sa.customers_with_unpaid_invoices
 
     assert_equal 786, customers.count
@@ -80,7 +76,6 @@ class CustomerAnalystTest < Minitest::Test
   end
 
   def test_best_invoice_by_revenue
-    skip
     invoice = sa.best_invoice_by_revenue
 
     assert_equal 3394, invoice.id
@@ -88,7 +83,6 @@ class CustomerAnalystTest < Minitest::Test
   end
 
   def test_best_invoice_by_quantity
-    skip
     invoice = sa.best_invoice_by_quantity
 
     assert_equal 1281, invoice.id

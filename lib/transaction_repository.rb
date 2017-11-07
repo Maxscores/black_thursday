@@ -18,10 +18,10 @@ class TransactionRepository
   end
 
   def find_by_id(transaction_id)
-    invoice = transactions.select do |id, invoice|
+    invoices = transactions.select do |id, invoice|
       invoice.any? {|transaction| transaction.id == transaction_id.to_i}
     end.values.flatten
-    invoice.find {|transaction| transaction.id == transaction_id.to_i}
+    invoices.find {|transaction| transaction.id == transaction_id.to_i}
   end
 
   def find_all_by_invoice_id(invoice_id)
