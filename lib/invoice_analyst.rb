@@ -39,13 +39,13 @@ module InvoiceAnalyst
 
   private
   def count_all_invoices_for_each_merchant
-    se.merchants.merchants.map do |merchant|
+    se.merchants.all.map do |merchant|
       merchant.invoices.count
     end
   end
 
   def accumulate_merchant_invoices
-    se.invoices.invoices.reduce({}) do |result, invoice|
+    se.invoices.all.reduce({}) do |result, invoice|
       result[invoice.merchant_id] = 0 if result[invoice.merchant_id].nil?
       result[invoice.merchant_id] += 1
       result
@@ -93,7 +93,7 @@ module InvoiceAnalyst
   end
 
   def accumulate_invoice_by_day
-    se.invoices.invoices.reduce({}) do |result, invoice|
+    se.invoices.all.reduce({}) do |result, invoice|
       day = invoice.created_at.strftime('%A')
       result[day] = 0 if result[day].nil?
       result[day] += 1
@@ -106,7 +106,7 @@ module InvoiceAnalyst
   end
 
   def invoice_status_accumulator
-    se.invoices.invoices.reduce({}) do |result, invoice|
+    se.invoices.all.reduce({}) do |result, invoice|
       result[invoice.status] = 0 if result[invoice.status].nil?
       result[invoice.status] += 1
       result

@@ -14,7 +14,7 @@ class InvoiceItemRepository
   end
 
   def all
-    invoice_items.values
+    invoice_items.values.flatten
   end
 
   def find_by_id(invoice_item_id)
@@ -32,6 +32,7 @@ class InvoiceItemRepository
   end
 
   def find_all_by_invoice_id(invoice_id)
+    return [] if invoice_items[invoice_id.to_i].nil?
     invoice_items[invoice_id.to_i]
   end
 

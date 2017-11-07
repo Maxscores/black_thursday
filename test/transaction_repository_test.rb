@@ -29,8 +29,8 @@ class TransactionRepositoryTest < Minitest::Test
   def test_transaction_repository_initalizes_with_attributes
     assert_instance_of TransactionRepository, transactions
     assert_equal 2, transactions.all.count
-    assert_instance_of Transaction, transactions.all.first[1]
-    assert_instance_of TransactionRepository, transactions.transactions.first[1].parent
+    assert_instance_of Transaction, transactions.all.first
+    assert_instance_of TransactionRepository, transactions.all.first.parent
   end
 
   def test_can_find_all_transactions

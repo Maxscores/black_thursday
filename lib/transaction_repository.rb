@@ -25,20 +25,22 @@ class TransactionRepository
   end
 
   def find_all_by_invoice_id(invoice_id)
+    return [] if transactions[invoice_id].nil?
     transactions[invoice_id]
   end
 
   def find_all_by_credit_card_number(num)
-    invoice = transactions.select do |id, invoice|
+    invoices = transactions.select do |id, invoice|
       invoice.any? {|transaction| transaction.credit_card_number == num.to_i}
     end.values.flatten
-    invoice.find_all {|transaction| transaction.credit_card_number == num.to_i}
+    invoices.find_all {|transaction| transaction.credit_card_number == num.to_i}
   end
 
   def find_all_by_result(result)
-    transactions.select do |id, transaction|
-      transaction.result.downcase == result.downcase
-    end.values
+    invoices = transactions.select do |id, invoice|
+      invoice.any? {|transaction| transaction.result == result}
+    end.values.flatten
+    invoices.find_all{|transaction| transaction.result == result}
   end
 
   def find_invoice_by_invoice_id(invoice_id)
