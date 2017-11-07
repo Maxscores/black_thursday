@@ -13,21 +13,21 @@ class CustomerRepository
   end
 
   def all
-    customers
+    customers.values
   end
 
   def find_by_id(id)
-    all[id]
+    customers[id]
   end
 
   def find_all_by_first_name(name)
-    all.select do |customer_id, customer|
+    customers.select do |customer_id, customer|
       customer.first_name.downcase.include?(name.downcase)
     end.values
   end
 
   def find_all_by_last_name(name)
-    all.select do |customer_id, customer|
+    customers.select do |customer_id, customer|
       customer.last_name.downcase.include?(name.downcase)
     end.values
   end

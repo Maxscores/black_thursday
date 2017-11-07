@@ -12,27 +12,27 @@ class InvoiceRepository
   end
 
   def all
-    invoices
+    invoices.values
   end
 
   def find_by_id(id)
-    all[id]
+    invoices[id]
   end
 
   def find_all_by_customer_id(customer_id)
-    all.select do |id, invoice|
+    invoices.select do |id, invoice|
       invoice.customer_id == customer_id
     end.values
   end
 
   def find_all_by_merchant_id(merchant_id)
-    all.select do |id, invoice|
+    invoices.select do |id, invoice|
       invoice.merchant_id == merchant_id
     end.values
   end
 
   def find_all_by_status(status)
-    all.select do |id, invoice|
+    invoices.select do |id, invoice|
       invoice.status == status.downcase.to_sym
     end.values
   end

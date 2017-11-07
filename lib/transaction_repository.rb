@@ -13,11 +13,11 @@ class TransactionRepository
   end
 
   def all
-    transactions
+    transactions.values
   end
 
   def find_by_id(id)
-    all[id]
+    transactions[id]
   end
 
   def find_all_by_invoice_id(invoice_id)

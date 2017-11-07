@@ -13,39 +13,39 @@ class ItemRepository
   end
 
   def all
-    items
+    items.values
   end
 
   def find_by_id(id)
-    all[id]
+    items[id]
   end
 
   def find_by_name(name)
-    all.select do |id, item|
+    items.select do |id, item|
       item.name.downcase == name.downcase
     end.values[0]
   end
 
   def find_all_with_description(phrase)
-    all.select do |id, item|
+    items.select do |id, item|
       item.description.downcase.include?(phrase.downcase)
     end.values
   end
 
   def find_all_by_price(price)
-    all.select do |id, item|
+    items.select do |id, item|
       item.unit_price == price
     end.values
   end
 
   def find_all_by_price_in_range(range)
-    all.select do |id, item|
+    items.select do |id, item|
       range.include?(item.unit_price)
     end.values
   end
 
   def find_all_by_merchant_id(merchant_id)
-    all.select do |id, item|
+    items.select do |id, item|
       item.merchant_id.to_s == merchant_id.to_s
     end.values
   end

@@ -13,21 +13,21 @@ class InvoiceItemRepository
   end
 
   def all
-    invoice_items
+    invoice_items.values
   end
 
   def find_by_id(id)
-    all[id]
+    invoice_items[id]
   end
 
   def find_all_by_item_id(item_id)
-    all.select do |id, invoice_item|
+    invoice_items.select do |id, invoice_item|
       invoice_item.item_id.to_i == item_id.to_i
     end.values
   end
 
   def find_all_by_invoice_id(invoice_id)
-    all.select do |id, invoice_item|
+    invoice_items.select do |id, invoice_item|
       invoice_item.invoice_id.to_i == invoice_id.to_i
     end.values
   end

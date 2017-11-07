@@ -13,21 +13,21 @@ class MerchantRepository
   end
 
   def all
-    merchants
+    merchants.values
   end
 
   def find_by_id(id)
-    all[id]
+    merchants[id]
   end
 
   def find_by_name(name)
-    all.select do |id, merchant|
+    merchants.select do |id, merchant|
       merchant.name.downcase == name.downcase.to_s
     end.values[0]
   end
 
   def find_all_by_name(word)
-    all.select do |id, merchant|
+    merchants.select do |id, merchant|
       merchant.name.downcase.include?(word.downcase)
     end.values
   end
