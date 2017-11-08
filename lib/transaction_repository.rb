@@ -5,37 +5,42 @@ class TransactionRepository
               :parent
 
   def initialize(transactions, parent)
-    @transactions = transactions.map {|transaction|
-      Transaction.new(transaction, self)}
     @parent = parent
+    @transactions = transactions.reduce({}) do |result, trans|
+      result[trans[:invoice_id].to_i] = [] if !result[trans[:invoice_id].to_i]
+      result[trans[:invoice_id].to_i] << Transaction.new(trans, self)
+      result
+    end
   end
 
   def all
-    transactions
+    transactions.values.flatten
   end
 
-  def find_by_id(id)
-    transactions.find do |transaction|
-      transaction.id == id
-    end
+  def find_by_id(transaction_id)
+    invoices = transactions.select do |id, invoice|
+      invoice.any? {|transaction| transaction.id == transaction_id.to_i}
+    end.values.flatten
+    invoices.find {|transaction| transaction.id == transaction_id.to_i}
   end
 
-  def find_all_by_invoice_id(id)
-    transactions.find_all do |transaction|
-      transaction.invoice_id == id
-    end
+  def find_all_by_invoice_id(invoice_id)
+    return [] if transactions[invoice_id].nil?
+    transactions[invoice_id]
   end
 
-  def find_all_by_credit_card_number(number)
-    transactions.find_all do |transaction|
-      transaction.credit_card_number == number
-    end
+  def find_all_by_credit_card_number(num)
+    invoices = transactions.select do |id, invoice|
+      invoice.any? {|transaction| transaction.credit_card_number == num.to_i}
+    end.values.flatten
+    invoices.find_all {|transaction| transaction.credit_card_number == num.to_i}
   end
 
   def find_all_by_result(result)
-    transactions.find_all do |transaction|
-      transaction.result.downcase == result.downcase
-    end
+    invoices = transactions.select do |id, invoice|
+      invoice.any? {|transaction| transaction.result == result}
+    end.values.flatten
+    invoices.find_all{|transaction| transaction.result == result}
   end
 
   def find_invoice_by_invoice_id(invoice_id)

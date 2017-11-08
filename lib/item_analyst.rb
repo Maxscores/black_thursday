@@ -24,14 +24,14 @@ module ItemAnalyst
   end
 
   def average_item_price_for_merchant(merchant_id)
-    merchant = se.merchants.find_by_id(merchant_id.to_s)
+    merchant = se.merchants.find_by_id(merchant_id)
     BigDecimal((merchant.items.inject(0) do |sum, item|
       sum += item.unit_price
     end/merchant.items.count)).round(2)
   end
 
   def average_average_price_per_merchant
-    BigDecimal((se.merchants.merchants.inject(0) do |sum, merchant|
+    BigDecimal((se.merchants.all.inject(0) do |sum, merchant|
       sum += average_item_price_for_merchant(merchant.id)
     end/merchant_count)).round(2)
   end
@@ -57,7 +57,7 @@ module ItemAnalyst
   end
 
   def accumulate_merchant_items
-    se.items.items.reduce({}) do |result, item|
+    se.items.all.reduce({}) do |result, item|
       result[item.merchant_id] = 0 if result[item.merchant_id].nil?
       result[item.merchant_id] += 1
       result
@@ -69,13 +69,13 @@ module ItemAnalyst
   end
 
   def all_item_prices
-    se.items.items.map do |item|
+    se.items.all.map do |item|
       item.unit_price
     end
   end
 
   def total_all_item_prices
-    se.items.items.inject(0) do |sum, item|
+    se.items.all.inject(0) do |sum, item|
       sum += item.unit_price
     end
   end

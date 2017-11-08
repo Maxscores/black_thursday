@@ -5,30 +5,36 @@ class InvoiceItemRepository
               :parent
 
   def initialize(invoice_items, parent)
-    @invoice_items = invoice_items.map {|invoice_item| InvoiceItem.new(invoice_item, self)}
     @parent = parent
+    @invoice_items = invoice_items.reduce({}) do |result, invoice_item|
+      key = invoice_item[:invoice_id].to_i
+      result[key] = [] if !result[key]
+      result[key] << InvoiceItem.new(invoice_item, self)
+      result
+    end
   end
 
   def all
-    invoice_items
+    invoice_items.values.flatten
   end
 
-  def find_by_id(id)
-    invoice_items.find do |invoice_item|
-      invoice_item.id.to_i == id.to_i
-    end
+  def find_by_id(invoice_item_id)
+    invoices = invoice_items.select do |id, invoice|
+      invoice.any? {|invoice_item| invoice_item.id == invoice_item_id.to_i}
+    end.values.flatten
+    invoices.find {|invoice_item| invoice_item.id == invoice_item_id.to_i}
   end
 
   def find_all_by_item_id(item_id)
-    invoice_items.find_all do |invoice_item|
-      invoice_item.item_id.to_i == item_id.to_i
-    end
+    invoices = invoice_items.select do |id, invoice|
+      invoice.any? {|invoice_item| invoice_item.item_id == item_id.to_i}
+    end.values.flatten
+    invoices.find_all {|invoice_item| invoice_item.item_id == item_id.to_i}
   end
 
   def find_all_by_invoice_id(invoice_id)
-    invoice_items.find_all do |invoice_item|
-      invoice_item.invoice_id.to_i == invoice_id.to_i
-    end
+    return [] if invoice_items[invoice_id.to_i].nil?
+    invoice_items[invoice_id.to_i]
   end
 
   def inspect

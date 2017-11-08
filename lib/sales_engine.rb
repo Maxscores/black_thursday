@@ -5,30 +5,22 @@ require_relative './invoice_repository'
 require_relative './transaction_repository'
 require_relative './customer_repository'
 require_relative './invoice_item_repository'
-require_relative './engine_readers'
 
 class SalesEngine
-  include EngineReaders
-  attr_reader :item_file,
-              :merchant_file,
-              :invoice_file,
-              :transaction_file,
-              :customer_file,
-              :invoice_item_file
+  attr_reader :items,
+              :merchants,
+              :invoices,
+              :transactions,
+              :customers,
+              :invoice_items
 
   def initialize(repository)
-    @items = nil
-    @item_file = repository[:items]
-    @merchants = nil
-    @merchant_file = repository[:merchants]
-    @invoices = nil
-    @invoice_file = repository[:invoices]
-    @transactions = nil
-    @transaction_file = repository[:transactions]
-    @customers = nil
-    @customer_file = repository[:customers]
-    @invoice_items = nil
-    @invoice_item_file = repository[:invoice_items]
+    @items = ItemRepository.new(repository[:items], self)
+    @merchants = MerchantRepository.new(repository[:merchants], self)
+    @invoices = InvoiceRepository.new(repository[:invoices], self)
+    @transactions = TransactionRepository.new(repository[:transactions], self)
+    @customers = CustomerRepository.new(repository[:customers], self)
+    @invoice_items = InvoiceItemRepository.new(repository[:invoice_items], self)
   end
 
   def self.from_csv(files)

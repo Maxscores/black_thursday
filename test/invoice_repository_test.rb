@@ -33,19 +33,19 @@ class InvoiceRepositoryTest < Minitest::Test
   end
 
   def test_can_find_invoice_by_id
-    assert_equal 24680, invoice_repo.find_by_id('24680').id
-    assert_equal 13579, invoice_repo.find_by_id('13579').id
-    assert_nil invoice_repo.find_by_id("24524")
+    assert_equal 24680, invoice_repo.find_by_id(24680).id
+    assert_equal 13579, invoice_repo.find_by_id(13579).id
+    assert_nil invoice_repo.find_by_id(24524)
   end
 
   def test_can_find_invoice_by_customer_id
-    assert_equal [], invoice_repo.find_all_by_customer_id('10293')
-    assert_equal 1, invoice_repo.find_all_by_customer_id('12345').count
+    assert_equal [], invoice_repo.find_all_by_customer_id(10293)
+    assert_equal 1, invoice_repo.find_all_by_customer_id(12345).count
   end
 
   def test_can_find_invoice_by_merchant_id
-    assert_equal [], invoice_repo.find_all_by_merchant_id('10293')
-    assert_equal 1, invoice_repo.find_all_by_merchant_id('54321').count
+    assert_equal [], invoice_repo.find_all_by_merchant_id(10293)
+    assert_equal 1, invoice_repo.find_all_by_merchant_id(54321).count
   end
 
   def test_can_find_invoices_by_status

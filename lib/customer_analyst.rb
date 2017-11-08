@@ -2,7 +2,7 @@ module CustomerAnalyst
   def top_buyers(x = 20)
     customer_spend = customer_spend(all_customer_invoices)
     sorted = sorted_customer_spend(customer_spend)
-    sorted.take(x).map do |(customer_id, spend)|
+    sorted.take(x).map do |(customer_id, _)|
       se.find_customer_by_id(customer_id)
     end
   end
@@ -10,7 +10,7 @@ module CustomerAnalyst
   def top_merchant_for_customer(customer_id)
     customer_invoices = se.invoices.find_all_by_customer_id(customer_id)
     merchant_totals = customer_total_spend_per_merchant(customer_invoices)
-    merchant = merchant_totals.max_by {|(merchant, total_spend)| total_spend}[0]
+    merchant = merchant_totals.max_by {|(_, total_spend)| total_spend}[0]
     se.merchants.find_by_id(merchant)
   end
 
@@ -23,7 +23,7 @@ module CustomerAnalyst
 
   def one_time_buyers_top_items
     item_count = accumulate_invoice_items(one_time_buyers_invoice_items)
-    top_item = item_count.max_by {|(item, count)| count}[0]
+    top_item = item_count.max_by {|(_, count)| count}[0]
     [se.items.find_by_id(top_item)]
   end
 
@@ -37,7 +37,7 @@ module CustomerAnalyst
     customer = se.customers.find_by_id(customer_id)
     invoice_items = customer.invoices.map {|invoice| invoice.invoice_items}
     counted_invoice_items = accumulate_invoice_items(invoice_items.flatten)
-    maximum_occuring_items(counted_invoice_items).map do |(item_id, count)|
+    maximum_occuring_items(counted_invoice_items).map do |(item_id, _)|
       se.items.find_by_id(item_id)
     end
   end
@@ -56,7 +56,7 @@ module CustomerAnalyst
   end
 
   def best_invoice_by_quantity
-    all_invoice_quantity(paid_invoices).max_by do |(invoice, count)|
+    all_invoice_quantity(paid_invoices).max_by do |(_, count)|
       count
     end[0]
   end
@@ -84,7 +84,7 @@ module CustomerAnalyst
   end
 
   def maximum_occuring_items(counted_invoice_items)
-    counted_invoice_items.group_by do |(item_id, count)|
+    counted_invoice_items.group_by do |(_, count)|
       count
     end.max.last
   end
@@ -143,7 +143,7 @@ module CustomerAnalyst
   end
 
   def sorted_customer_spend(customer_spend)
-    customer_spend.sort_by do |(customer_id, spend)|
+    customer_spend.sort_by do |(_, spend)|
       (-1) * spend
     end
   end
