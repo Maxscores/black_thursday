@@ -5,48 +5,49 @@ class ItemRepository
               :parent
 
   def initialize(items, parent)
-    @items = items.map {|item| Item.new(item, self)}
     @parent = parent
+    @items = items.reduce({}) do |result, item|
+      result[item[:id].to_i] = Item.new(item, self)
+      result
+    end
   end
 
   def all
-    items
+    items.values
   end
 
   def find_by_id(id)
-    items.find do |item|
-      item.id == id.to_i
-    end
+    items[id]
   end
 
   def find_by_name(name)
-    items.find do |item|
+    items.select do |id, item|
       item.name.downcase == name.downcase
-    end
+    end.values[0]
   end
 
   def find_all_with_description(phrase)
-    items.find_all do |item|
+    items.select do |id, item|
       item.description.downcase.include?(phrase.downcase)
-    end
+    end.values
   end
 
   def find_all_by_price(price)
-    items.find_all do |item|
+    items.select do |id, item|
       item.unit_price == price
-    end
+    end.values
   end
 
   def find_all_by_price_in_range(range)
-    items.find_all do |item|
+    items.select do |id, item|
       range.include?(item.unit_price)
-    end
+    end.values
   end
 
-  def find_all_by_merchant_id(id)
-    items.find_all do |item|
-      item.merchant_id.to_s == id.to_s
-    end
+  def find_all_by_merchant_id(merchant_id)
+    items.select do |id, item|
+      item.merchant_id.to_s == merchant_id.to_s
+    end.values
   end
 
   def find_merchant_by_id(merchant_id)

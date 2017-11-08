@@ -35,8 +35,8 @@ class TestItemRepository < Minitest::Test
   end
 
   def test_can_find_item_by_id
-    assert_equal 12345, items.find_by_id('12345').id
-    assert_equal 23456, items.find_by_id('23456').id
+    assert_equal 12345, items.find_by_id(12345).id
+    assert_equal 23456, items.find_by_id(23456).id
   end
 
   def test_can_find_item_by_name

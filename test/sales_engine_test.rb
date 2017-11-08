@@ -20,7 +20,7 @@ class SalesEngineTest < Minitest::Test
 
     assert_instance_of SalesEngine, se
     assert_instance_of ItemRepository, se.items
-    assert_equal 8, se.items.all.count
+    assert_equal 7, se.items.all.count
     assert_instance_of MerchantRepository, se.merchants
     assert_equal 5, se.merchants.all.count
     assert_instance_of InvoiceRepository, se.invoices
@@ -34,7 +34,7 @@ class SalesEngineTest < Minitest::Test
   def test_find_items_for_merchant_by_merchant_id
     merchant = se.merchants.find_by_id(12334185)
 
-    assert_equal 4, merchant.items.count
+    assert_equal 3, merchant.items.count
   end
 
   def test_find_merchant_for_item_by_merchant_id
@@ -101,10 +101,10 @@ class SalesEngineTest < Minitest::Test
     assert_equal 2, merchants.count
   end
 
-  def check_if_invoice_paid_in_full
+  def test_check_if_invoice_paid_in_full
     invoice_1 = se.invoices.find_by_id(1495)
-    invoice_2 = se.invoices.find_by_id(4966)
-
+    invoice_2 = se.invoices.find_by_id(2074)
+    require "pry"; binding.pry
     assert invoice_1.is_paid_in_full?
     refute invoice_2.is_paid_in_full?
   end
