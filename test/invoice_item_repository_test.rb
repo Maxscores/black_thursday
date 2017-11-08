@@ -2,7 +2,6 @@ require_relative './test_helper'
 require './lib/invoice_item_repository'
 
 class InvoiceItemsRepositoryTest < Minitest::Test
-
   def test_it_exists
     parent = mock('parent')
     invoice_items = [{

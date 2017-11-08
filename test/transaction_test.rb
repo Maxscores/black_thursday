@@ -63,5 +63,4 @@ class TransactionTest < Minitest::Test
 
     assert transaction.invoice
   end
-
 end

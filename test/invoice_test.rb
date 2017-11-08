@@ -104,5 +104,4 @@ class InvoiceTest < Minitest::Test
 
     assert_equal 4000, invoice_1.total
   end
-
 end

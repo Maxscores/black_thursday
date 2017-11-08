@@ -104,10 +104,8 @@ class SalesEngineTest < Minitest::Test
   def test_check_if_invoice_paid_in_full
     invoice_1 = se.invoices.find_by_id(1495)
     invoice_2 = se.invoices.find_by_id(2074)
-    require "pry"; binding.pry
+
     assert invoice_1.is_paid_in_full?
     refute invoice_2.is_paid_in_full?
   end
-
-
 end
