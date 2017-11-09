@@ -9,6 +9,7 @@ module CustomerAnalyst
 
   def top_merchant_for_customer(customer_id)
     customer_invoices = se.invoices.find_all_by_customer_id(customer_id)
+    return nil if customer_invoices.empty?
     merchant_totals = customer_total_spend_per_merchant(customer_invoices)
     merchant = merchant_totals.max_by {|(_, total_spend)| total_spend}[0]
     se.merchants.find_by_id(merchant)
@@ -35,11 +36,11 @@ module CustomerAnalyst
 
   def highest_volume_items(customer_id)
     customer = se.customers.find_by_id(customer_id)
-    invoice_items = customer.invoices.map {|invoice| invoice.invoice_items}
+    return nil if customer.nil?
+    invoice_items = get_customer_invoice_items(customer)
     counted_invoice_items = accumulate_invoice_items(invoice_items.flatten)
-    maximum_occuring_items(counted_invoice_items).map do |(item_id, _)|
-      se.items.find_by_id(item_id)
-    end
+    grouped_items = group_by_item_occurance(counted_invoice_items)
+    maximum_occuring_items(grouped_items)
   end
 
   def customers_with_unpaid_invoices
@@ -82,10 +83,20 @@ module CustomerAnalyst
     end
   end
 
-  def maximum_occuring_items(counted_invoice_items)
+  def group_by_item_occurance(counted_invoice_items)
     counted_invoice_items.group_by do |(_, count)|
       count
     end.max.last
+  end
+
+  def maximum_occuring_items(grouped_items)
+    grouped_items.map do |(item_id, _)|
+      se.items.find_by_id(item_id)
+    end
+  end
+
+  def get_customer_invoice_items(customer)
+    customer.invoices.map {|invoice| invoice.invoice_items}
   end
 
   def accumulate_invoice_items(invoice_items)

@@ -25,6 +25,7 @@ module ItemAnalyst
 
   def average_item_price_for_merchant(merchant_id)
     merchant = se.merchants.find_by_id(merchant_id)
+    return nil if merchant.nil?
     BigDecimal((merchant.items.inject(0) do |sum, item|
       sum += item.unit_price
     end/merchant.items.count)).round(2)

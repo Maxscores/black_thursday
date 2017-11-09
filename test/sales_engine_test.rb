@@ -33,20 +33,26 @@ class SalesEngineTest < Minitest::Test
 
   def test_find_items_for_merchant_by_merchant_id
     merchant = se.merchants.find_by_id(12334185)
+    no_merchant_with_id = se.merchants.find_by_id(1234)
 
     assert_equal 3, merchant.items.count
+    assert_nil no_merchant_with_id
   end
 
   def test_find_merchant_for_item_by_merchant_id
     item = se.items.find_by_id(263395721)
+    no_item_with_id = se.items.find_by_id(999999999)
 
     assert_equal 'Madewithgitterxx', item.merchant.name
+    assert_nil no_item_with_id
   end
 
   def test_find_invoices_for_merchant
     merchant = se.merchants.find_by_id(12334185)
+    no_merchant_with_id = se.merchants.find_by_id(99999999)
 
     assert_equal 24, merchant.invoices.count
+    assert_nil no_merchant_with_id
   end
 
   def test_find_items_for_invoice

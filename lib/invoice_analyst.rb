@@ -15,13 +15,13 @@ module InvoiceAnalyst
   end
 
   def top_merchants_by_invoice_count
-    minimum = top_merchants_by_invoice_threshold
-    find_merchants(minimum, 'min')
+    threshold = top_merchants_by_invoice_threshold
+    find_merchants(threshold, 'high')
   end
 
   def bottom_merchants_by_invoice_count
-    maximum = bottom_merchants_by_invoice_threshold
-    find_merchants(maximum, 'max')
+    threshold = bottom_merchants_by_invoice_threshold
+    find_merchants(threshold, 'low')
   end
 
   def top_days_by_invoice_count
@@ -54,8 +54,8 @@ module InvoiceAnalyst
 
   def find_merchants(threshold, mode)
     accumulate_merchant_invoices.reduce([]) do |result, (merchant, invoices)|
-      add_merchant(merchant, result) if invoices >= threshold && mode == 'min'
-      add_merchant(merchant, result) if invoices <= threshold && mode == 'max'
+      add_merchant(merchant, result) if invoices >= threshold && mode == 'high'
+      add_merchant(merchant, result) if invoices <= threshold && mode == 'low'
       result
     end
   end
