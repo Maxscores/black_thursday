@@ -16,12 +16,12 @@ module InvoiceAnalyst
 
   def top_merchants_by_invoice_count
     threshold = top_merchants_by_invoice_threshold
-    find_merchants(threshold, 'high')
+    find_merchants_with_invoice_threshold(threshold, 'high')
   end
 
   def bottom_merchants_by_invoice_count
     threshold = bottom_merchants_by_invoice_threshold
-    find_merchants(threshold, 'low')
+    find_merchants_with_invoice_threshold(threshold, 'low')
   end
 
   def top_days_by_invoice_count
@@ -37,7 +37,6 @@ module InvoiceAnalyst
     BigDecimal((10000 * separated[status].to_f / invoice_count).round)/100
   end
 
-  private
   def count_all_invoices_for_each_merchant
     se.merchants.all.map do |merchant|
       merchant.invoices.count
@@ -52,7 +51,7 @@ module InvoiceAnalyst
     end
   end
 
-  def find_merchants(threshold, mode)
+  def find_merchants_with_invoice_threshold(threshold, mode)
     accumulate_merchant_invoices.reduce([]) do |result, (merchant, invoices)|
       add_merchant(merchant, result) if invoices >= threshold && mode == 'high'
       add_merchant(merchant, result) if invoices <= threshold && mode == 'low'

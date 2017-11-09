@@ -24,6 +24,18 @@ class InvoiceAnalystTest < Minitest::Test
     assert_equal 6.8, result
   end
 
+  def test_find_merchants_with_invoice_threshold
+    merchants_above_1 = sa.find_merchants_with_invoice_threshold(2, 'high')
+    merchants_below_1 = sa.find_merchants_with_invoice_threshold(1.5, 'low')
+
+    assert_equal 4, merchants_above_1.count
+    assert_instance_of Merchant, merchants_above_1.first
+    assert_equal "MiniatureBikez", merchants_above_1.first.name
+    assert_equal 1, merchants_below_1.count
+    assert_instance_of Merchant, merchants_below_1.first
+    assert_equal "Candisart", merchants_below_1.first.name
+  end
+
   def test_top_merchants_by_invoice_count
     result = sa.top_merchants_by_invoice_count
 
