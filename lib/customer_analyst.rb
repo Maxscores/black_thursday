@@ -61,7 +61,6 @@ module CustomerAnalyst
     end[0]
   end
 
-  private
   def paid_invoices
     se.invoices.all.reduce([]) do |result, invoice|
       result << invoice if invoice.is_paid_in_full?
