@@ -40,4 +40,4 @@ Make sure you're at the same level as the black_thursday project:
 git clone https://github.com/Maxscores/black_thursday_spec_harness
 bundle
 ```
-To Run Test Suite: `https://github.com/Maxscores/black_thursday_spec_harness`
+To Run Test Suite: `bundle exec rake spec`
