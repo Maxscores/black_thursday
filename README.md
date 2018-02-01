@@ -42,3 +42,4 @@ cd black_thursday_spec_harness
 bundle
 ```
 To Run Test Suite: `bundle exec rake spec`
+*NOTE* All Tests of Iteration 4 should be failing. We chose to do Iteration 5 instead.
