@@ -44,6 +44,8 @@ bundle
 To Run Test Suite: `bundle exec rake spec`
 *NOTE* All Tests of Iteration 4 should be failing. We chose to do Iteration 5 instead.
 
+## Schema
+![schema](https://i.imgur.com/tUoPi6L.png)
 
 ## Command Line Interaction
 To Interact from the command line run:
