@@ -23,7 +23,16 @@ class SalesEngine
     @invoice_items = InvoiceItemRepository.new(repository[:invoice_items], self)
   end
 
-  def self.from_csv(files)
+  def self.load_default
+    SalesEngine.from_csv({items: './data/items.csv',
+                           merchants: './data/merchants.csv',
+                           invoices: './data/invoices.csv',
+                           transactions: './data/transactions.csv',
+                           customers: './data/customers.csv',
+                           invoice_items: './data/invoice_items.csv'})
+  end
+
+  def self.from_csv(files = default_files)
     SalesEngine.new({
       :items => load_csv(files[:items]),
       :merchants => load_csv(files[:merchants]),
